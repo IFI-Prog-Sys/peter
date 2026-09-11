@@ -1,0 +1,13 @@
+version: '3'
+
+services:
+  discord-bot:
+    build:
+      context: ./discord-bot
+      dockerfile: Dockerfile
+    develop:
+      watch:
+        - action: sync+restart
+          target: /dc-bot
+          path: ./discord-bot
+    env_file: ./.env
