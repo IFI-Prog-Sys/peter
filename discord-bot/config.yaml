@@ -18,3 +18,7 @@ target_guild_id: ~
 socket_bind_addr: 'localhost'
 socket_bind_port: 42069
 socket_max_connections: 5
+
+# misc config
+
+redundant_config_opts: "Ignore"
