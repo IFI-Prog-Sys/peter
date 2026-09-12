@@ -1,0 +1,24 @@
+# This is the config file for the discord bot
+# Some fields are optional, and when discarded they will default to
+# the default values defined at `main.py`. You can check which
+# values are optional and which are required by looking at the
+# config definition.
+
+# Make sure to fill out necessary parts before running the bot
+
+# general config
+
+# put the id for the role that you want to be given to interns
+intern_role_id: ~
+# put the guild id for the server that you want the role to be given at
+target_guild_id: ~
+
+# socket config
+
+socket_bind_addr: 'localhost'
+socket_bind_port: 42069
+socket_max_connections: 5
+
+# misc config
+
+redundant_config_opts: "Ignore"
