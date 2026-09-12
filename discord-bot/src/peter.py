@@ -88,16 +88,29 @@ class Peter(discord.Client):
 			self.logger.error(f"User {username} does not exist")
 			return
 
-		# in rare occasions where a username might match multiple users error out
+		# in rare occasions a username might match something partially but not exactly
+		# this might happen if;
+		# a user registers with the discord username: foo
+		# this user is not in the server yet
+		# but there is another user called foobar
+		# so foobar gets the role even tho he shouldn't
+
+		# or in other rare occasions where a username might match multiple users, look for an exact match
 		# this might happen if;
 		# a user registeres with the username: foo
 		# but there is another user called foobar
 		# so both foo and foobar matches
-		if len(members) > 1:
-			self.logger.error(f"{username} matches multiple members")
+
+		# filter the list to see if there is an exact match
+		filtered_members = list(filter(lambda member: member.name == username, members))
+		if len(filtered_members) == 0:
+			# return if there are no exact matches
+			self.logger.error(
+				f"{username} has {len(members)} partial match(es) in members, but doesn't have an exact match."
+			)
 			return
 
-		member = members[0]
+		member = filtered_members[0]
 
 		self.logger.info(f'Adding role of {role_id} to [{member.id}]({member.display_name})')
 		# add the role
