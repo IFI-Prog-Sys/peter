@@ -1,7 +1,7 @@
 import asyncio
 import threading
 
-from logging import Logger
+import logging
 import socket
 
 import discord
@@ -11,11 +11,11 @@ from utils import get_all_unregistered_members
 
 
 class Peter(discord.Client):
-	def __init__(self, logger: Logger, config, *, intents: Intents | None = None, **options) -> None:
+	def __init__(self, config, *, intents: Intents | None = None, **options) -> None:
 		self.config = config
 		self.server = None
 		self.target_guild: discord.Guild | None = None
-		self.logger = logger
+		self.logger = logging.getLogger("__main__")
 
 		# if intents are none just include them all
 		# TODO: limit intents depending on the acual use case
