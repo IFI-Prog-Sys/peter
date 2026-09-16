@@ -10,7 +10,6 @@ def main():
 
 	# set up the config
 	config = Config(
-		logger,
 		# general config
 		"intern_role_id", "target_guild_id",
 		# socket config
@@ -22,7 +21,7 @@ def main():
 		config.load(stream)
 
 	# set up & run the bot
-	pete = Peter(logger, config)
+	pete = Peter(config)
 	discord_token = get_env('DISCORD_BOT_TOKEN')
 	pete.run(discord_token)
 

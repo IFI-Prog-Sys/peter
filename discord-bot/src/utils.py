@@ -9,10 +9,10 @@ import yaml as _yaml
 
 # A helper class to keep track of the config
 class Config:
-	# Takes every (except the first) positional argument as a name for a required field in the config field and
+	# Takes every positional argument as a name for a required field in the config field and
 	# takes every keyword argument as a name and a default value for fields in the config.
-	def __init__(self, logger, *required_configs: str, **optional_configs):
-		self.logger = logger
+	def __init__(self, *required_configs: str, **optional_configs):
+		self.logger = _logging.getLogger("__main__")
 
 		self.config = {}
 		self.required_configs = required_configs
