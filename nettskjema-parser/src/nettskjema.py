@@ -2,13 +2,14 @@ import sys as _sys
 
 import time as _time
 import logging as _logging
+import typing as _typing
 
 import requests as _requests
 import json as _json
 
 
 class NettskjemaToken:
-	def __init__(self, access_token, token_type, expires_in):
+	def __init__(self, access_token: str, token_type: str, expires_in: int):
 		self.access_token = access_token
 		self.token_type = token_type
 		self.expires_in = expires_in
@@ -24,7 +25,7 @@ class NettskjemaSession:
 
 		self.token: NettskjemaToken | None = None
 
-	def get_token(self):
+	def update_token(self) -> None:
 		r = _requests.request(
 			method="POST",
 			url="https://authorization.nettskjema.no/oauth2/token",
@@ -43,7 +44,7 @@ class NettskjemaSession:
 			self.logger.error("Cannot parse the token.")
 			_sys.exit(1)
 
-	def request(self, *args, **kwargs):
+	def request(self, *args, **kwargs: dict[str, _typing.Any]) -> _requests.Response:
 		create_token = False
 		if self.token is None:
 			self.logger.info("No token was found.")
@@ -55,7 +56,12 @@ class NettskjemaSession:
 
 		if create_token:
 			self.logger.info("Creating a new token.")
-			self.get_token()
+			self.update_token()
+
+		# if nettskjema returns an empty token or if something goes really wrong
+		if self.token is None:
+			self.logger.error("Token creation failed.")
+			_sys.exit(1)
 
 		headers = kwargs.pop("headers", {})
 
