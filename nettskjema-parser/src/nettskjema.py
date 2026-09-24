@@ -44,7 +44,7 @@ class NettskjemaSession:
 		)
 		# if it is not a success exit
 		if r.status_code != 200:
-			self.logger.error("Error getting a token.")
+			self.logger.error(f"Error getting a token. Server returned {r.status_code}.")
 			_sys.exit(1)
 
 		# technically we should always get a json response
