@@ -3,7 +3,7 @@
 from utils import *
 from peter import Peter
 
-def main():
+def main() -> None:
 	# set up the logger
 	log_path = r"./logs/latest.log"
 	logger = get_logger(__name__, log_path)
