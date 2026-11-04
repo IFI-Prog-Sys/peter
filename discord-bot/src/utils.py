@@ -4,6 +4,8 @@ import os as _os
 import logging as _logging
 import pathlib as _pathlib
 
+import typing as _typing
+
 import yaml as _yaml
 
 
@@ -11,7 +13,7 @@ import yaml as _yaml
 class Config:
 	# Takes every positional argument as a name for a required field in the config field and
 	# takes every keyword argument as a name and a default value for fields in the config.
-	def __init__(self, *required_configs: str, **optional_configs):
+	def __init__(self, *required_configs: str, **optional_configs: dict[str, _typing.Any]) -> None:
 		self.logger = _logging.getLogger("__main__")
 
 		self.config = {}
@@ -22,10 +24,10 @@ class Config:
 		if "redundant_config_opts" not in self.optional_configs:
 			self.optional_configs.update({"redundant_config_opts": "Ignore"})
 
-	def create(self, f_name: str):
+	def create(self, f_name: str) -> None:
 		self.logger.info(f"Creating config file {f_name}")
 
-		data = []
+		data: list[str] = []
 		# Format string for each line to use while creating the config file
 		required_line_str = "{}: ~\n"
 		optional_line_str = "{}: {}\n"
@@ -46,7 +48,7 @@ class Config:
 
 		self.logger.info(f"Config created successfully.")
 
-	def load(self, stream):
+	def load(self, stream: _typing.TextIO) -> None:
 		# Load the config or an empty dict if the file is empty
 		self.config = _yaml.safe_load(stream) or {}
 
@@ -76,7 +78,7 @@ class Config:
 
 		self.logger.info(f"Config loaded successfully.")
 
-	def safe_load(self, f_name: str, force_create=True):
+	def safe_load(self, f_name: str, force_create=True) -> None:
 		f_path = _pathlib.Path(f_name)
 		# if file exists load it
 		if _pathlib.Path.exists(f_path):
@@ -102,7 +104,7 @@ class Config:
 			self.logger.error(f"Config file {f_name} not found. Set `force_create` to True to create one.")
 
 	# define a getitem so we can just use config["name"] to get config values
-	def __getitem__(self, key):
+	def __getitem__(self, key: str) -> _typing.Any:
 		return self.config[key]
 
 
@@ -110,7 +112,7 @@ class Config:
 def get_all_unregistered_members() -> list[str]:
 	# open the database
 	# get every intern without a discord registration
-	return ["rex.0515"]
+	pass
 
 
 # get the logger to be used by the bot
@@ -118,9 +120,9 @@ def get_logger(name: str | None, path: str) -> _logging.Logger:
 	# create the log files parents path if it doesn't exist
 	_pathlib.Path(path).parent.mkdir(parents=True, exist_ok=True)
 
-	# get the lenght of the longest level name so we can use it to align out log
+	# get the length of the longest level name so we can use it to align out log
 	# I feel like there should be a better way of doing this
-	_max_level_length = max(map(len, _logging.getLevelNamesMapping().keys()))
+	_max_level_length: int = max(map(len, _logging.getLevelNamesMapping().keys()))
 	_logging.basicConfig(
 		filename=path,
 		level=_logging.INFO,
