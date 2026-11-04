@@ -7,13 +7,13 @@ import socket
 import discord
 from discord import Intents
 
-from utils import get_all_unregistered_members
+from utils import get_all_unregistered_members, Config
 
 
 class Peter(discord.Client):
-	def __init__(self, config, *, intents: Intents | None = None, **options) -> None:
+	def __init__(self, config: Config, *, intents: Intents | None = None, **options) -> None:
 		self.config = config
-		self.server = None
+		self.server: socket.socket | None = None
 		self.target_guild: discord.Guild | None = None
 		self.logger = logging.getLogger("__main__")
 
@@ -28,6 +28,10 @@ class Peter(discord.Client):
 	def listener(self) -> None:
 		# set up the socket
 		self.server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+		if self.server is None:
+			self.logger.error("Server creation failed")
+			return
+
 		self.server.bind((
 			self.config["socket_bind_addr"],
 			self.config["socket_bind_port"]
