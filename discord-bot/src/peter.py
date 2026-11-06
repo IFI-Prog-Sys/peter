@@ -4,6 +4,8 @@ import threading
 import logging
 import socket
 
+from datetime import datetime, timezone
+
 import discord
 from discord import Intents
 
@@ -44,14 +46,16 @@ class Peter(discord.Client):
 		while True:
 			# block the code if there is no activity
 			client, addr = self.server.accept()
-			response = "HTTP/1.0 200\r\nConnection: close\r\n\r\n{}\r\n"
-			client.send(response.format("Checking the database").encode("utf-8"))
+			response = "HTTP/1.0 200\r\nConnection: close\r\nDate: {}\r\n\r\n{}\r\n"
+			client.send(response.format(
+				datetime.now(timezone.utc).strftime("%a, %d %b %Y %H:%M:%S GMT"),
+				"Recieved update request from {}".format(str(addr))
+			).encode("utf-8"))
 
 			self.logger.info(f"Updating roles on discord, requested by {addr}")
 
 			# get unregistered users from the database
 			users_to_add = get_all_unregistered_members()
-			client.send(f"Found {len(users_to_add)} unregistered user(s).\r\n".encode("utf-8"))
 
 			# shutdown the connection
 			client.shutdown(socket.SHUT_RDWR)
