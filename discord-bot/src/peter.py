@@ -20,7 +20,7 @@ class Peter(discord.Client):
 		self.logger = logging.getLogger("__main__")
 
 		# if intents are none just include them all
-		# TODO: limit intents depending on the acual use case
+		# TODO: limit intents depending on the acual use case.
 		if intents is None:
 			intents = Intents.all()
 		super().__init__(intents=intents, **options)
