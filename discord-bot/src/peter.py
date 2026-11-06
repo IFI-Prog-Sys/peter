@@ -1,4 +1,5 @@
 import asyncio
+import os
 import threading
 
 import logging
@@ -9,36 +10,38 @@ from datetime import datetime, timezone
 import discord
 from discord import Intents
 
-from utils import get_all_unregistered_members, Config
+from utils import get_all_unregistered_members, get_env
 
 
 class Peter(discord.Client):
-	def __init__(self, config: Config, *, intents: Intents | None = None, **options) -> None:
-		self.config = config
+	def __init__(self, *, intents: Intents | None = None, **options) -> None:
 		self.server: socket.socket | None = None
 		self.target_guild: discord.Guild | None = None
 		self.logger = logging.getLogger("__main__")
 
 		# if intents are none just include them all
-		# TODO: limit intents depending on the acual use case.
+		# TODO: limit intents depending on the actual use case.
 		if intents is None:
 			intents = Intents.all()
 		super().__init__(intents=intents, **options)
 
 	# the listener function which listens for network requests
-	# this allows us to either call it periodically usin cron, manually using curl or automatically
+	# this allows us to either call it periodically using cron, manually using curl or automatically
 	def listener(self) -> None:
+		self.logger.info("Initializing the update listener")
 		# set up the socket
 		self.server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 		if self.server is None:
 			self.logger.error("Server creation failed")
 			return
+		self.logger.info("Server creation successful")
 
+		self.logger.info(f"Listening for updates at {""}:{int(get_env("SOCKET_BIND_PORT"))}")
 		self.server.bind((
-			self.config["socket_bind_addr"],
-			self.config["socket_bind_port"]
+			"",
+			int(get_env("SOCKET_BIND_PORT"))
 		))
-		self.server.listen(self.config["socket_max_connections"])
+		self.server.listen(int(get_env("SOCKET_MAX_CONN")))
 
 		self.logger.info("Waiting for signals from the os")
 
@@ -49,7 +52,7 @@ class Peter(discord.Client):
 			response = "HTTP/1.0 200\r\nConnection: close\r\nDate: {}\r\n\r\n{}\r\n"
 			client.send(response.format(
 				datetime.now(timezone.utc).strftime("%a, %d %b %Y %H:%M:%S GMT"),
-				"Recieved update request from {}".format(str(addr))
+				"Received update request from {}".format(str(addr))
 			).encode("utf-8"))
 
 			self.logger.info(f"Updating roles on discord, requested by {addr}")
@@ -69,7 +72,7 @@ class Peter(discord.Client):
 		self.logger.info(f'Logged in as {self.user}')
 
 		# set the target discord server on ready so we don't make calls to the api multiple times
-		self.target_guild = await self.fetch_guild(self.config["target_guild_id"])
+		self.target_guild = await self.fetch_guild(int(get_env("TARGET_GUILD_ID")))
 		if self.target_guild is None:
 			self.logger.error("Target guild does not exist")
 			return
@@ -84,7 +87,7 @@ class Peter(discord.Client):
 			return
 
 		# this can be on ready but if the role gets deleted after initialization it might cause problems
-		role_id = self.config["intern_role_id"]
+		role_id = int(get_env("INTERN_ROLE_ID"))
 		role = self.target_guild.get_role(role_id)
 		if role is None:
 			self.logger.error("Role does not exist")
@@ -105,12 +108,12 @@ class Peter(discord.Client):
 
 		# or in other rare occasions where a username might match multiple users, look for an exact match
 		# this might happen if;
-		# a user registeres with the username: foo
+		# a user registers with the username: foo
 		# but there is another user called foobar
 		# so both foo and foobar matches
 
 		# filter the list to see if there is an exact match
-		filtered_members = list(filter(lambda member: member.name == username, members))
+		filtered_members = list(filter(lambda mem: mem.name == username, members))
 		if len(filtered_members) == 0:
 			# return if there are no exact matches
 			self.logger.error(
