@@ -15,7 +15,7 @@ target_guild_id: ~
 
 # socket config
 
-socket_bind_addr: 'localhost'
+socket_bind_addr: ''
 socket_bind_port: 42069
 socket_max_connections: 5
 

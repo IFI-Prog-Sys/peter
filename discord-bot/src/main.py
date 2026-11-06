@@ -13,7 +13,7 @@ def main() -> None:
 		# general config
 		"intern_role_id", "target_guild_id",
 		# socket config
-		socket_bind_addr="localhost", socket_bind_port=42069, socket_max_connections=5,
+		socket_bind_addr="", socket_bind_port=42069, socket_max_connections=5,
 	)
 
 	# load the config
