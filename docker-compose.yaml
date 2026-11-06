@@ -1,7 +1,40 @@
 version: '3'
 
 services:
+  db:
+    container_name: peter_db
+    image: postgres:latest
+    networks:
+      - isolated
+    ports:
+      - "5432"
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}" ]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+    env_file: .env
+
+  database-handler:
+    build:
+      context: ./database-handler
+      dockerfile: Dockerfile
+    depends_on:
+      db:
+        condition: service_healthy
+    networks:
+      - isolated
+      - default
+    ports:
+      - "8000:8000"
+    develop:
+      watch:
+        - action: sync+restart
+          target: /handler
+          path: ./database-handler/src
+
   discord-bot:
+    container_name: discord_bot
     build:
       context: ./discord-bot
       dockerfile: Dockerfile
@@ -22,3 +55,10 @@ services:
           target: /parser
           path: ./nettskjema-parser
     env_file: ./.env
+
+networks:
+  isolated:
+    driver: bridge
+    internal: true
+  default:
+    driver: bridge
