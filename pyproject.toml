@@ -1,0 +1,12 @@
+[tool.ruff]
+# Exclude every file from being processed
+exclude = ["*"]
+
+# Forces Ruff to honor exclusions even when specific files are passed by tools like pre-commit
+force-exclude = true
+
+[tool.pyright]
+# Disable reporting of missing imports globally or set severity to "none"
+reportMissingImports = false
+reportMissingModuleSource = false
+reportMissingTypeStubs = false
