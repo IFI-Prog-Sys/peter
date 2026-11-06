@@ -12,5 +12,4 @@ COPY requirements.txt .
 RUN pip3 install -r requirements.txt
 COPY . .
 
-CMD ["ls"]
 CMD ["fastapi", "run", "./src/main.py"]
