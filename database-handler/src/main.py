@@ -16,7 +16,7 @@ def set_stuff():
     acc = []
     for addr in registered_adresses:
         with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
-            s.connect((addr, 69420))
+            s.connect((addr, 42069))
             s.sendall(b"Update Time")
             data = s.recv(1024)
             acc.append({addr: data.decode("utf-8")})
