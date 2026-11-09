@@ -19,6 +19,8 @@ services:
     build:
       context: ./database-handler
       dockerfile: Dockerfile
+    volumes:
+      - common:/app/common:ro
     depends_on:
       db:
         condition: service_healthy
@@ -38,6 +40,8 @@ services:
     build:
       context: ./discord-bot
       dockerfile: Dockerfile
+    volumes:
+      - common:/app/common:ro
     develop:
       watch:
         - action: sync+restart
@@ -49,6 +53,8 @@ services:
     build:
       context: ./nettskjema-parser
       dockerfile: Dockerfile
+    volumes:
+      - common:/app/common:ro
     develop:
       watch:
         - action: sync+restart
@@ -62,3 +68,11 @@ networks:
     internal: true
   default:
     driver: bridge
+
+volumes:
+  common:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: ./common

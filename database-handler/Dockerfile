@@ -7,9 +7,9 @@ RUN apk add \
     postgresql-client \
     curl
 
-WORKDIR /handler
+WORKDIR /app
 COPY requirements.txt .
 RUN pip3 install -r requirements.txt
-COPY . .
+COPY ./src .
 
-CMD ["fastapi", "run", "./src/main.py"]
+CMD ["fastapi", "run", "./main.py"]
