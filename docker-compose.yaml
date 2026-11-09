@@ -32,7 +32,7 @@ services:
     develop:
       watch:
         - action: sync+restart
-          target: /handler
+          target: /app
           path: ./database-handler/src
 
   discord-bot:
@@ -45,8 +45,8 @@ services:
     develop:
       watch:
         - action: sync+restart
-          target: /dc-bot
-          path: ./discord-bot
+          target: /app
+          path: ./discord-bot/src
     env_file: ./.env
 
   nettskjema-parser:
@@ -58,8 +58,8 @@ services:
     develop:
       watch:
         - action: sync+restart
-          target: /parser
-          path: ./nettskjema-parser
+          target: /app
+          path: ./nettskjema-parser/src
     env_file: ./.env
 
 networks:
