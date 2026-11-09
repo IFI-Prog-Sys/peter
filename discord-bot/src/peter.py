@@ -10,7 +10,8 @@ from datetime import datetime, timezone
 import discord
 from discord import Intents
 
-from utils import get_all_unregistered_members, get_env
+from utils import get_all_unregistered_members
+from common.utils import get_env
 
 
 class Peter(discord.Client):

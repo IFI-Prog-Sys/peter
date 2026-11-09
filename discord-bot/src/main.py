@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 
-from utils import *
+from common.utils import *
 from peter import Peter
 
 def main() -> None:
